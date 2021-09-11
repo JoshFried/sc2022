@@ -21,11 +21,11 @@ import java.util.UUID;
 public class ConfirmationToken {
     @Id
     @GeneratedValue
-    private long   tokenId;
+    private long   id;
     private String confirmationToken;
     private Date   dateCreated;
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User   user;
 
     public ConfirmationToken(final User user) {
