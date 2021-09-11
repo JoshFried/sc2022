@@ -20,8 +20,7 @@ public class EmailService {
         email.setTo(user.getEmail());
         email.setSubject("Email Confirmation");
         email.setFrom("sc2021jf@gmail.com");
-        email.setText("To confirm your email click here : "
-                              + "http://localhost:8080/confirm-account?token=" + token.getConfirmationToken());
+        email.setText(String.format("To confirm your email click here : http://localhost:8080/confirm-account?token=%s", token.getConfirmationToken()));
         mailSender.send(email);
     }
 }
