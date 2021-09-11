@@ -1,8 +1,10 @@
 package com.jf.sc2022.dto;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
 
-@Data
+@Builder
+@EqualsAndHashCode
 public class UserDTO {
     private Long   id;
     private String username;
