@@ -1,12 +1,11 @@
 package com.jf.sc2022.dal.service.exceptions;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
-public class SCUserAlreadyExistsException extends RuntimeException {
-    public SCUserAlreadyExistsException(final String msg) {
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class SCNotFoundException extends RuntimeException {
+    public SCNotFoundException(final String msg) {
         super(msg);
     }
 }
