@@ -1,5 +1,6 @@
 package com.jf.sc2022.configuartion;
 
+import com.jf.sc2022.converter.ImageListingRequestDTOToImageListingConverter;
 import com.jf.sc2022.converter.RegistrationDTOToUserConverter;
 import com.jf.sc2022.converter.UserToUserDTOConverter;
 import lombok.RequiredArgsConstructor;
@@ -61,5 +62,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
     public void addFormatters(final FormatterRegistry mvcConversionService) {
         mvcConversionService.addConverter(new UserToUserDTOConverter());
         mvcConversionService.addConverter(new RegistrationDTOToUserConverter());
+        mvcConversionService.addConverter(new ImageListingRequestDTOToImageListingConverter());
     }
 }
