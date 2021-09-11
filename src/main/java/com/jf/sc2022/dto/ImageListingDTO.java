@@ -14,7 +14,6 @@ public class ImageListingDTO {
     private String title;
     private String description;
     private long   views;
-    private double rating;
     private double price;
     private String path;
 }

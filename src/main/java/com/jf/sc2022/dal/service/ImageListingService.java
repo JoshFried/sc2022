@@ -18,7 +18,6 @@ public class ImageListingService {
 
     private static final String STORAGE_DIRECTORY = "/src/main/resources/storage";
 
-
     private ImageListingDTO createAndSaveImageListing(final ImageListingRequestDTO listingRequestDTO, final String path) {
         final ImageListing listing = mvcConversionService.convert(listingRequestDTO, ImageListing.class);
         final User         user    = userService.getUserFromContext();
