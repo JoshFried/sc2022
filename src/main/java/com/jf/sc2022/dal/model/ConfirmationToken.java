@@ -22,15 +22,15 @@ public class ConfirmationToken {
     @Id
     @GeneratedValue
     private long   tokenId;
-    private String token;
+    private String confirmationToken;
     private Date   dateCreated;
     @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "id", nullable = false)
     private User   user;
 
     public ConfirmationToken(final User user) {
-        this.user   = user;
-        dateCreated = new Date();
-        token       = UUID.randomUUID().toString();
+        this.user         = user;
+        dateCreated       = new Date();
+        confirmationToken = UUID.randomUUID().toString();
     }
 }

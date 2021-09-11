@@ -1,5 +1,6 @@
 package com.jf.sc2022.configuartion;
 
+import com.jf.sc2022.converter.RegistrationDTOToUserConverter;
 import com.jf.sc2022.converter.UserToUserDTOConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -59,5 +60,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
     @Override
     public void addFormatters(final FormatterRegistry mvcConversionService) {
         mvcConversionService.addConverter(new UserToUserDTOConverter());
+        mvcConversionService.addConverter(new RegistrationDTOToUserConverter());
     }
 }

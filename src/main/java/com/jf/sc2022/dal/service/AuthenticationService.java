@@ -27,18 +27,12 @@ public class AuthenticationService {
 
     public static final String USER_ALREADY_EXISTS_ERROR_MESSAGE = "Username/email already exists";
 
-    public UserDTO registerUser(final RegistrationDTO registration) {
-        if (userService.emailExists(registration.getEmail()) || userService.usernameExists(registration.getUsername())) {
-            throw new SCUserAlreadyExistsException(USER_ALREADY_EXISTS_ERROR_MESSAGE);
-        }
-        RegistrationValidator.validateRegistration(registration);
+    public UserDTO registerUser(final RegistrationDTO registrationDTO) {
+        validateRegistrationDTO(registrationDTO);
+        final User user = buildUserFromRegistrationDTO(registrationDTO);
 
-        final User user = mvcConversionService.convert(registration, User.class);
-        Objects.requireNonNull(user).setPassword(passwordEncoder.encode(registration.getPassword()));
-        emailService.createAndSendEmailConfirmation(user);
         return userService.createUser(user);
     }
-
 
     public UserDTO confirmUserAccount(final String token) {
         final ConfirmationToken confirmationToken = confirmationTokenRepository.findByConfirmationToken(token);
@@ -48,5 +42,19 @@ public class AuthenticationService {
         }
 
         return userService.toggleAccountActivation(confirmationToken.getUser());
+    }
+
+    private User buildUserFromRegistrationDTO(final RegistrationDTO registrationDTO) {
+        final User user = mvcConversionService.convert(registrationDTO, User.class);
+        Objects.requireNonNull(user).setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
+        emailService.createAndSendEmailConfirmation(user);
+        return user;
+    }
+
+    private void validateRegistrationDTO(final RegistrationDTO registrationDTO) {
+        if (userService.emailExists(registrationDTO.getEmail()) || userService.usernameExists(registrationDTO.getUsername())) {
+            throw new SCUserAlreadyExistsException(USER_ALREADY_EXISTS_ERROR_MESSAGE);
+        }
+        RegistrationValidator.validateRegistration(registrationDTO);
     }
 }
