@@ -11,9 +11,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -24,18 +26,19 @@ import java.util.Date;
 public class ImageListing {
     @Id
     @GeneratedValue
-    private long   id;
-    private Date   listingDate;
-    private String title;
-    private String description;
-    private long   views;
-
-    private double price;
+    private long    id;
+    private Date    listingDate;
+    private String  title;
+    private String  description;
+    private long    views;
+    private double  price;
+    private boolean available;
 
     @Column(unique = true)
-    private String path;
-
+    private String   path;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private User     user;
+    @ManyToMany
+    private Set<Tag> tags;
 }

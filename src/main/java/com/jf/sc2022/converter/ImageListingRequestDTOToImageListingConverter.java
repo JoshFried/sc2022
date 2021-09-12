@@ -11,6 +11,8 @@ public class ImageListingRequestDTOToImageListingConverter implements Converter<
     public ImageListing convert(final ImageListingRequestDTO listingRequestDTO) {
         return ImageListing.builder()
                            .title(listingRequestDTO.getTitle())
+                           .tags(listingRequestDTO.getTags())
+                           .available(listingRequestDTO.isAvailable())
                            .description(listingRequestDTO.getDescription())
                            .price(listingRequestDTO.getPrice())
                            .build();

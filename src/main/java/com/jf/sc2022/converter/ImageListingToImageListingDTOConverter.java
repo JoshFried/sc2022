@@ -18,6 +18,8 @@ public class ImageListingToImageListingDTOConverter implements Converter<ImageLi
                               .price(imageListing.getPrice())
                               .title(imageListing.getTitle())
                               .views(imageListing.getViews())
+                              .tags(imageListing.getTags())
+                              .available(imageListing.isAvailable())
                               .build();
     }
 }
