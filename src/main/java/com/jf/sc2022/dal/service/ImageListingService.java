@@ -47,7 +47,7 @@ public class ImageListingService {
      * @param requestDTO ImageListingRequest containing all the information to create our new ImageListing object and save to the DB
      * @return ImageListingDTO representing the newly saved object in our database
      */
-    private ImageListingDTO handleImageListing(final ImageListingRequestDTO requestDTO) {
+    public ImageListingDTO handleImageListing(final ImageListingRequestDTO requestDTO) {
         final String path      = createPath(requestDTO.getMultipartFile());
         final String logPrefix = "ImageListingService [buildImageListingDTO]:";
 
@@ -106,5 +106,9 @@ public class ImageListingService {
     private static boolean validateRequest(final BulkImageListingRequestDTO bulkImageListingRequestDTO) {
         return bulkImageListingRequestDTO.getImageListingRequestDTOList() == null
                        || bulkImageListingRequestDTO.getImageListingRequestDTOList().isEmpty();
+    }
+
+    public ImageListingDTO getImageListing(final long imageListingId) {
+        return mvcConversionService.convert(repository.getById(imageListingId), ImageListingDTO.class);
     }
 }
