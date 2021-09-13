@@ -52,4 +52,13 @@ public class UserService {
         user.getListings().add(listing);
         userRepository.save(user);
     }
+
+    public UserDTO getUser(final long id) {
+        return mvcConversionService.convert(userRepository.findById(id), UserDTO.class);
+    }
+
+    public UserDTO updateUser() {
+        //TODO: implementation
+        return null;
+    }
 }
