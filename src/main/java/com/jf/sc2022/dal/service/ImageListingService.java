@@ -39,7 +39,8 @@ public class ImageListingService {
             throw new SCNotFoundException("Input is invalid, you must upload at least 1 image");
         }
 
-        return bulkImageListingRequestDTO.getImageListingRequestDTOList().stream()
+        return bulkImageListingRequestDTO.getImageListingRequestDTOList()
+                                         .stream()
                                          .map(this::handleImageListing)
                                          .collect(Collectors.toList());
     }

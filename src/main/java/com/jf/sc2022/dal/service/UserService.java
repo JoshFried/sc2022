@@ -44,6 +44,10 @@ public class UserService {
     public UserDTO getUserByUsername(final String username) {
         return mvcConversionService.convert(handleGetByUsername(username), UserDTO.class);
     }
+   
+    public User fetchByUsername(final String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new SCNotFoundException(ExceptionHelper.getNotFoundExceptionMessage("Username", username)));
+    }
 
     public void updateUsersListings(final User user, final ImageListing listing) {
         user.getListings().add(listing);

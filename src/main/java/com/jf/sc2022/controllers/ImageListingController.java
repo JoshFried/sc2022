@@ -26,7 +26,7 @@ public class ImageListingController {
         return new ResponseEntity<>(imageListingService.handleImageListing(imageListingRequestDTO), HttpStatus.CREATED);
     }
 
-    @PostMapping
+    @PostMapping("/temp")
     public ResponseEntity<List<ImageListingDTO>> addBulkNewListings(@RequestBody final BulkImageListingRequestDTO bulkImageListingRequestDTO) {
         return new ResponseEntity<>(imageListingService.handleBulkImages(bulkImageListingRequestDTO), HttpStatus.CREATED);
     }
@@ -36,7 +36,7 @@ public class ImageListingController {
         return new ResponseEntity<>(imageListingService.getImageListing(id), HttpStatus.OK);
     }
 
-    @PutMapping
+    @PutMapping("/temp")
     public ResponseEntity<ImageListingDTO> updateImageListing(@RequestBody final ImageListingDTO imageListingDTO) {
         return new ResponseEntity<>(imageListingService.updateImageListing(imageListingDTO), HttpStatus.ACCEPTED);
     }

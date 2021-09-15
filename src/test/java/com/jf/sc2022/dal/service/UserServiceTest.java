@@ -94,20 +94,4 @@ class UserServiceTest {
 
         Assertions.assertTrue(classUnderTest.toggleAccountActivation(before).isEnabled());
     }
-
-    @Test
-    void fetchByUsername() {
-    }
-
-    @Test
-    void updateUsersListings() {
-    }
-
-    @Test
-    void getUser() {
-    }
-
-    @Test
-    void updateUser() {
-    }
 }

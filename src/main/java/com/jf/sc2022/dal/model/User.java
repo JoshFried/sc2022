@@ -38,6 +38,6 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL)
     private List<ImageListing> listings;
 
-//    @OneToMany
-//    private List<Payment>      transactionHistory;
+    @OneToMany
+    private List<Payment> transactionHistory;
 }
