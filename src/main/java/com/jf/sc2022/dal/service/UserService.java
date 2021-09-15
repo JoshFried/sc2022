@@ -1,6 +1,7 @@
 package com.jf.sc2022.dal.service;
 
 import com.jf.sc2022.dal.dao.UserRepository;
+import com.jf.sc2022.dal.dao.mapper.UserMapper;
 import com.jf.sc2022.dal.model.ImageListing;
 import com.jf.sc2022.dal.model.User;
 import com.jf.sc2022.dal.service.exceptions.ExceptionHelper;
@@ -20,7 +21,7 @@ public class UserService {
 
     public User getUserFromContext() {
         final UserDetails details = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return fetchByUsername(details.getUsername());
+        return handleGetByUsername(details.getUsername());
     }
 
     public UserDTO createUser(final User user) {
@@ -41,11 +42,7 @@ public class UserService {
     }
 
     public UserDTO getUserByUsername(final String username) {
-        return mvcConversionService.convert(fetchByUsername(username), UserDTO.class);
-    }
-
-    public User fetchByUsername(final String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new SCNotFoundException(ExceptionHelper.getNotFoundExceptionMessage("Username", username)));
+        return mvcConversionService.convert(handleGetByUsername(username), UserDTO.class);
     }
 
     public void updateUsersListings(final User user, final ImageListing listing) {
@@ -57,8 +54,12 @@ public class UserService {
         return mvcConversionService.convert(userRepository.findById(id), UserDTO.class);
     }
 
-    public UserDTO updateUser() {
-        //TODO: implementation
-        return null;
+    public UserDTO updateUser(final UserDTO user) {
+        return mvcConversionService.convert(userRepository.save(UserMapper.mapStringFields(user, userRepository.getById(user.getId()))),
+                                            UserDTO.class);
+    }
+
+    private User handleGetByUsername(final String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new SCNotFoundException(ExceptionHelper.getNotFoundExceptionMessage("Username", username)));
     }
 }

@@ -4,9 +4,12 @@ import com.jf.sc2022.dal.model.ImageListing;
 import com.jf.sc2022.dal.service.exceptions.InvalidPriceException;
 import com.jf.sc2022.dto.ImageListingDTO;
 import com.jf.sc2022.dto.registration.validators.FieldValidator;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ImageListingMapper {
     public static ImageListing updateImageFields(final ImageListingDTO dto, final ImageListing entity) {
         if (!dto.getTitle().equals(entity.getTitle())) {

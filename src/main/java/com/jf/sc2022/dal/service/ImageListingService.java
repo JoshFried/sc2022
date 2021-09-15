@@ -1,6 +1,7 @@
 package com.jf.sc2022.dal.service;
 
 import com.jf.sc2022.dal.dao.ImageListingRepository;
+import com.jf.sc2022.dal.dao.mapper.ImageListingMapper;
 import com.jf.sc2022.dal.model.ImageListing;
 import com.jf.sc2022.dal.model.User;
 import com.jf.sc2022.dal.service.exceptions.SCInvalidPathException;
@@ -110,5 +111,10 @@ public class ImageListingService {
 
     public ImageListingDTO getImageListing(final long imageListingId) {
         return mvcConversionService.convert(repository.getById(imageListingId), ImageListingDTO.class);
+    }
+
+    public ImageListingDTO updateImageListing(final ImageListingDTO imageListingDTO) {
+        return mvcConversionService.convert(repository.save(ImageListingMapper.updateImageFields(imageListingDTO, repository.getById(imageListingDTO.getId()))),
+                                            ImageListingDTO.class);
     }
 }

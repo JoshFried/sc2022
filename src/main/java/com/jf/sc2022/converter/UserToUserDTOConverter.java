@@ -15,6 +15,7 @@ public class UserToUserDTOConverter implements Converter<User, UserDTO> {
                       .username(user.getUsername())
                       .firstName(user.getFirstName())
                       .lastName(user.getLastName())
+                      .isEnabled(user.isEnabled())
                       .build();
     }
 }

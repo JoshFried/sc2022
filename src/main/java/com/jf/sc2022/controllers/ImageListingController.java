@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,5 +34,10 @@ public class ImageListingController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<ImageListingDTO> getImageListing(@PathVariable final long id) {
         return new ResponseEntity<>(imageListingService.getImageListing(id), HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<ImageListingDTO> updateImageListing(@RequestBody final ImageListingDTO imageListingDTO) {
+        return new ResponseEntity<>(imageListingService.updateImageListing(imageListingDTO), HttpStatus.ACCEPTED);
     }
 }

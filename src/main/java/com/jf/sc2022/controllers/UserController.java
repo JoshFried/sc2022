@@ -17,18 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping(path = "{id}")
+    @PostMapping(path = "/{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable final long id) {
         return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
     }
 
-    @GetMapping(path = "{username}")
+    @GetMapping(path = "/{username}")
     public ResponseEntity<UserDTO> getUser(@PathVariable final String username) {
         return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
     }
 
     @PutMapping
     public ResponseEntity<UserDTO> updateUser(@RequestBody final UserDTO userDTO) {
-        return new ResponseEntity<>(userService.updateUser(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(userService.updateUser(userDTO), HttpStatus.ACCEPTED);
     }
 }

@@ -19,6 +19,7 @@ public class UserHelper {
                    .id(USER_ID)
                    .lastName(LAST_NAME)
                    .password(PASSWORD)
+                   .isEnabled(true)
                    .build();
     }
 
@@ -28,6 +29,7 @@ public class UserHelper {
                    .email(EMAIL)
                    .firstName(FIRST_NAME)
                    .lastName(LAST_NAME)
+                   .isEnabled(true)
                    .build();
     }
 
@@ -37,6 +39,7 @@ public class UserHelper {
                       .email(EMAIL)
                       .firstName(FIRST_NAME)
                       .lastName(LAST_NAME)
+                      .isEnabled(true)
                       .build();
     }
 
@@ -47,6 +50,7 @@ public class UserHelper {
                       .firstName(FIRST_NAME)
                       .lastName(LAST_NAME)
                       .id(USER_ID)
+                      .isEnabled(true)
                       .build();
     }
 }
