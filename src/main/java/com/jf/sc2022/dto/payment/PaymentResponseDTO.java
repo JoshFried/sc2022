@@ -10,4 +10,5 @@ public class PaymentResponseDTO {
     @Getter private String clientName;
     @Getter private String listingTitle;
     @Getter private String artistName;
+    @Getter private double price;
 }

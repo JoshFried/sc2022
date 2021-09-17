@@ -75,7 +75,7 @@ public class AuthenticationService {
     private User buildUserFromRegistrationDTO(final RegistrationDTO registrationDTO) {
         final User user = mvcConversionService.convert(registrationDTO, User.class);
         Objects.requireNonNull(user).setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
-        emailService.createAndSendEmailConfirmation(user);
+        emailService.sendConfirmationEmail(user);
         return user;
     }
 

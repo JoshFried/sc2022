@@ -104,7 +104,8 @@ public class PaymentService {
                                                                      .clientSecret(intent.getClientSecret())
                                                                      .artistName(artist.getFirstName())
                                                                      .clientName(buyer.getFirstName())
-                                                                     .listingTitle(paymentRequestDTO.getImageListingId())
+                                                                     .listingTitle(imageListingDTO.getTitle())
+                                                                     .price(imageListingDTO.getPrice())
                                                                      .build();
 
             emailService.handlePaymentEvent(buyer, artist, responseDTO);

@@ -13,22 +13,34 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class EmailService {
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
-    public void createAndSendEmailConfirmation(final User user) {
+    /**
+     * After a user attempts to register send a confirmation email with the token, allowing a customer to enable their account
+     *
+     * @param user the new user that has been created
+     */
+    public void sendConfirmationEmail(final User user) {
         final ConfirmationToken token = new ConfirmationToken(user);
 
         final String content = String.format("To confirm your email click here : http://localhost:8080/confirm-account?token=%s", token.getConfirmationToken());
         getSimpleMailMessage(user.getEmail(), content);
     }
 
+    /**
+     * This method is triggered by the successful completion of a payment event, sending an email to both the customer and the artist notifying them of a successful transaction
+     *
+     * @param buyer              the user that bought the image listing
+     * @param artist             the user that created the image listing
+     * @param paymentResponseDTO object containing all the information about the transaction
+     */
     public void handlePaymentEvent(final UserDTO buyer, final UserDTO artist, final PaymentResponseDTO paymentResponseDTO) {
         sendConfirmationEmail(buyer, paymentResponseDTO);
         sendOrderNotification(artist, paymentResponseDTO);
     }
 
     private void sendConfirmationEmail(final UserDTO userDTO, final PaymentResponseDTO responseDTO) {
-        final String content = String.format("This email is to confirm your order of the listing titled: %d from artist: %s purchased for the price of: %d",
+        final String content = String.format("This email is to confirm your order of the listing titled: %s from artist: %s purchased for the price of: %f",
                                              responseDTO.getListingTitle(),
                                              responseDTO.getArtistName(),
                                              responseDTO.getPrice());
@@ -37,7 +49,7 @@ public class EmailService {
     }
 
     private void sendOrderNotification(final UserDTO userDTO, final PaymentResponseDTO paymentResponseDTO) {
-        final String content = String.format("This email is to notify you of a purchasing order from user: %s for the listing titled: %d for a purchase price of :%d",
+        final String content = String.format("This email is to notify you of a purchasing order from user: %s for the listing titled: %s for a purchase price of :%f",
                                              paymentResponseDTO.getClientName(),
                                              paymentResponseDTO.getListingTitle(),
                                              paymentResponseDTO.getPrice());
