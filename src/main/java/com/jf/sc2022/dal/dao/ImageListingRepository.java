@@ -11,4 +11,8 @@ public interface ImageListingRepository extends JpaRepository<ImageListing, Long
     List<ImageListing> findAllByTags(Tag tag);
 
     List<ImageListing> findAllByTagsContains(List<Tag> tagSet);
+
+    List<ImageListing> findAllByTitleLike(String title);
+
+    List<ImageListing> findAllByDescriptionLike(String description);
 }

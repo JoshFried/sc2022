@@ -96,6 +96,14 @@ public class ImageListingService {
         return convertBulkImageListings(repository.findAllByTagsContains(tags));
     }
 
+    public List<ImageListingDTO> searchByTitle(final String title) {
+        return convertBulkImageListings(repository.findAllByTitleLike(title));
+    }
+
+    public List<ImageListingDTO> searchByDescription(final String description) {
+        return convertBulkImageListings(repository.findAllByDescriptionLike(description));
+    }
+
     private List<ImageListingDTO> convertBulkImageListings(final List<ImageListing> listings) {
         return listings.stream()
                        .map(imageListing -> mvcConversionService.convert(imageListing, ImageListingDTO.class))
