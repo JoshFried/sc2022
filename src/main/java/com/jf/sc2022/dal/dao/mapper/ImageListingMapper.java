@@ -27,6 +27,20 @@ public class ImageListingMapper {
             }
             entity.setPrice(dto.getPrice());
         }
+
+        if (!dto.getTags().equals(entity.getTags())) {
+
+            entity.getTags().addAll(dto.getTags());
+        }
+
+        if (dto.getViews() != entity.getViews()) {
+            entity.setViews(dto.getViews());
+        }
+
+        if (dto.isAvailable() != entity.isAvailable()) {
+            entity.setAvailable(dto.isAvailable());
+        }
+
         return entity;
     }
 }

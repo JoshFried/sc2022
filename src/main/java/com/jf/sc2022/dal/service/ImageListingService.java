@@ -3,6 +3,7 @@ package com.jf.sc2022.dal.service;
 import com.jf.sc2022.dal.dao.ImageListingRepository;
 import com.jf.sc2022.dal.dao.mapper.ImageListingMapper;
 import com.jf.sc2022.dal.model.ImageListing;
+import com.jf.sc2022.dal.model.Tag;
 import com.jf.sc2022.dal.model.User;
 import com.jf.sc2022.dal.service.exceptions.SCInvalidPathException;
 import com.jf.sc2022.dal.service.exceptions.SCNotFoundException;
@@ -17,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,6 +66,42 @@ public class ImageListingService {
         return insertImageListing(requestDTO, path);
     }
 
+    public ImageListingDTO getImageListing(final long imageListingId) {
+        return mvcConversionService.convert(repository.getById(imageListingId), ImageListingDTO.class);
+    }
+
+    public ImageListingDTO updateImageListing(final ImageListingDTO imageListingDTO) {
+        return mvcConversionService.convert(repository.save(ImageListingMapper.updateImageFields(imageListingDTO, repository.getById(imageListingDTO.getId()))),
+                                            ImageListingDTO.class);
+    }
+
+    public ImageListingDTO deleteImageListing(final ImageListingDTO imageListingDTO) {
+        final String path = imageListingDTO.getPath();
+
+        try {
+            Files.deleteIfExists(Path.of(path));
+            repository.deleteById(imageListingDTO.getId());
+            return imageListingDTO;
+        } catch (final IOException e) {
+            log.error(String.format("ImageListingService [deleteImageListing]: failed to delete image listing due to an invalid path %s", path));
+            throw new SCInvalidPathException(String.format("Cannot find path: %s", path));
+        }
+    }
+
+    public List<ImageListingDTO> searchByTag(final Tag tag) {
+        return convertBulkImageListings(repository.findAllByTags(tag));
+    }
+
+    public List<ImageListingDTO> searchByTags(final List<Tag> tags) {
+        return convertBulkImageListings(repository.findAllByTagsContains(tags));
+    }
+
+    private List<ImageListingDTO> convertBulkImageListings(final List<ImageListing> listings) {
+        return listings.stream()
+                       .map(imageListing -> mvcConversionService.convert(imageListing, ImageListingDTO.class))
+                       .collect(Collectors.toList());
+    }
+
     /**
      * @param requestDTO ImageListingRequest containing all the information to create our new ImageListing object and save to the DB
      * @param path       this is the path where the new image will be saved
@@ -71,6 +110,7 @@ public class ImageListingService {
     private ImageListingDTO insertImageListing(final ImageListingRequestDTO requestDTO, final String path) {
         final ImageListing listing = mvcConversionService.convert(requestDTO, ImageListing.class);
         final User         user    = userService.getUserFromContext();
+
         listing.setUser(user);
         listing.setPath(path);
 
@@ -108,14 +148,5 @@ public class ImageListingService {
     private static boolean validateRequest(final BulkImageListingRequestDTO bulkImageListingRequestDTO) {
         return bulkImageListingRequestDTO.getImageListingRequestDTOList() == null
                        || bulkImageListingRequestDTO.getImageListingRequestDTOList().isEmpty();
-    }
-
-    public ImageListingDTO getImageListing(final long imageListingId) {
-        return mvcConversionService.convert(repository.getById(imageListingId), ImageListingDTO.class);
-    }
-
-    public ImageListingDTO updateImageListing(final ImageListingDTO imageListingDTO) {
-        return mvcConversionService.convert(repository.save(ImageListingMapper.updateImageFields(imageListingDTO, repository.getById(imageListingDTO.getId()))),
-                                            ImageListingDTO.class);
     }
 }
