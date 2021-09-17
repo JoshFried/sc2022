@@ -20,4 +20,5 @@ public class ImageListingDTO {
     private String   path;
     private Set<Tag> tags;
     private boolean  available;
+    private long     userId;
 }

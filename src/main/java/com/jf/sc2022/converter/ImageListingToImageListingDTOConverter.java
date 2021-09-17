@@ -20,6 +20,7 @@ public class ImageListingToImageListingDTOConverter implements Converter<ImageLi
                               .views(imageListing.getViews())
                               .tags(imageListing.getTags())
                               .available(imageListing.isAvailable())
+                              .userId(imageListing.getUser().getId())
                               .build();
     }
 }
