@@ -6,7 +6,7 @@ import com.jf.sc2022.dal.model.ImageListing;
 import com.jf.sc2022.dal.model.Tag;
 import com.jf.sc2022.dal.model.User;
 import com.jf.sc2022.dal.service.exceptions.SCInvalidPathException;
-import com.jf.sc2022.dal.service.exceptions.SCNotFoundException;
+import com.jf.sc2022.dal.service.exceptions.SCInvalidRequestException;
 import com.jf.sc2022.dto.BulkImageListingRequestDTO;
 import com.jf.sc2022.dto.ImageListingDTO;
 import com.jf.sc2022.dto.ImageListingRequestDTO;
@@ -34,12 +34,14 @@ public class ImageListingService {
     private static final String STORAGE_DIRECTORY = "/src/main/resources/storage";
 
     /**
+     * Handle a bulk image request, first validate the request -> a valid request contains at least one new ImageListing
+     *
      * @param bulkImageListingRequestDTO ImageListingRequest containing multiple ImageListingRequestDTO objects
      * @return ImageListingDTO representing the newly saved object in our database
      */
     public List<ImageListingDTO> handleBulkImages(final BulkImageListingRequestDTO bulkImageListingRequestDTO) {
         if (!validateRequest(bulkImageListingRequestDTO)) {
-            throw new SCNotFoundException("Input is invalid, you must upload at least 1 image");
+            throw new SCInvalidRequestException("Input is invalid, you must upload at least 1 image");
         }
 
         return bulkImageListingRequestDTO.getImageListingRequestDTOList()
@@ -100,8 +102,8 @@ public class ImageListingService {
         return convertBulkImageListings(repository.findAllByTitleLike(title));
     }
 
-    public List<ImageListingDTO> searchByDescription(final String description) {
-        return convertBulkImageListings(repository.findAllByDescriptionLike(description));
+    public List<ImageListingDTO> searchByDescription(final String query) {
+        return convertBulkImageListings(repository.findAllByDescriptionLike(query));
     }
 
     private List<ImageListingDTO> convertBulkImageListings(final List<ImageListing> listings) {
@@ -131,7 +133,7 @@ public class ImageListingService {
      * @return the path where the new image will be saved
      */
     private String createPath(final MultipartFile multipartFile) {
-        final String path = String.format("%s/%s", STORAGE_DIRECTORY, multipartFile.getOriginalFilename());
+        final String path = String.format("%s%s%s", STORAGE_DIRECTORY, File.separator, multipartFile.getOriginalFilename());
         return validatePath(multipartFile, path);
     }
 
@@ -155,6 +157,6 @@ public class ImageListingService {
      */
     private static boolean validateRequest(final BulkImageListingRequestDTO bulkImageListingRequestDTO) {
         return bulkImageListingRequestDTO.getImageListingRequestDTOList() == null
-                       || bulkImageListingRequestDTO.getImageListingRequestDTOList().isEmpty();
+                       || !bulkImageListingRequestDTO.getImageListingRequestDTOList().isEmpty();
     }
 }

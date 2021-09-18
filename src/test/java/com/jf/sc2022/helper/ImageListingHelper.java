@@ -1,10 +1,12 @@
 package com.jf.sc2022.helper;
 
 import com.jf.sc2022.dal.model.ImageListing;
+import com.jf.sc2022.dto.BulkImageListingRequestDTO;
 import com.jf.sc2022.dto.ImageListingDTO;
 import com.jf.sc2022.dto.ImageListingRequestDTO;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Date;
 
 public class ImageListingHelper {
@@ -13,7 +15,6 @@ public class ImageListingHelper {
     public static final String TITLE            = "title";
     public static final String DESCRIPTION      = "description";
     public static final long   VIEWS            = 0L;
-    public static final double RATING           = 5.0;
     public static final double PRICE            = 1.0;
     public static final String PATH             = "path";
 
@@ -58,5 +59,11 @@ public class ImageListingHelper {
                                      .price(PRICE)
                                      .title(TITLE)
                                      .build();
+    }
+
+    public static BulkImageListingRequestDTO buildBulkImageListingRequestDTO() {
+        return BulkImageListingRequestDTO.builder()
+                                         .imageListingRequestDTOList(Collections.singletonList(buildImageListingRequestDTO()))
+                                         .build();
     }
 }
