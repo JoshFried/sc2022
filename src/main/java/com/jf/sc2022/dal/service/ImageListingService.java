@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,26 +91,26 @@ public class ImageListingService {
         }
     }
 
-    public List<ImageListingDTO> searchByTag(final Tag tag) {
+    public Set<ImageListingDTO> searchByTag(final Tag tag) {
         return convertBulkImageListings(repository.findAllByTags(tag));
     }
 
-    public List<ImageListingDTO> searchByTags(final List<Tag> tags) {
-        return convertBulkImageListings(repository.findAllByTagsContains(tags));
-    }
+//    public Set<ImageListingDTO> searchByTags(final Set<Tag> tags) {
+//        return convertBulkImageListings(tags.stream().map(tag -> repository.findAllByTags(tag)).flatMap(Collectors.toSet()))
+//    }
 
-    public List<ImageListingDTO> searchByTitle(final String title) {
+    public Set<ImageListingDTO> searchByTitle(final String title) {
         return convertBulkImageListings(repository.findAllByTitleLike(title));
     }
 
-    public List<ImageListingDTO> searchByDescription(final String query) {
+    public Set<ImageListingDTO> searchByDescription(final String query) {
         return convertBulkImageListings(repository.findAllByDescriptionLike(query));
     }
 
-    private List<ImageListingDTO> convertBulkImageListings(final List<ImageListing> listings) {
+    private Set<ImageListingDTO> convertBulkImageListings(final Set<ImageListing> listings) {
         return listings.stream()
                        .map(imageListing -> mvcConversionService.convert(imageListing, ImageListingDTO.class))
-                       .collect(Collectors.toList());
+                       .collect(Collectors.toSet());
     }
 
     /**

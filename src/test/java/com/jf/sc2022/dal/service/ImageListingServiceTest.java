@@ -3,6 +3,7 @@ package com.jf.sc2022.dal.service;
 import com.jf.sc2022.dal.dao.ImageListingRepository;
 import com.jf.sc2022.dal.model.ImageListing;
 import com.jf.sc2022.dal.model.User;
+import com.jf.sc2022.dal.service.exceptions.SCInvalidRequestException;
 import com.jf.sc2022.dto.BulkImageListingRequestDTO;
 import com.jf.sc2022.dto.ImageListingDTO;
 import com.jf.sc2022.dto.ImageListingRequestDTO;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,15 +53,13 @@ class ImageListingServiceTest {
         Mockito.verify(userService).updateUsersListings(user, imageListing);
     }
 
+    @Test
+    void testHandleBulkImagesWhenListIsEmpty() {
+        final BulkImageListingRequestDTO bulkImageListingRequestDTO = ImageListingHelper.buildBulkImageListingRequestDTO();
+        bulkImageListingRequestDTO.setImageListingRequestDTOList(new ArrayList<>());
 
-    //TODO: Get this to worok lul...
-//    @Test
-//    void testHandleBulkImagesWhenListIsEmpty() {
-//        final BulkImageListingRequestDTO bulkImageListingRequestDTO = ImageListingHelper.buildBulkImageListingRequestDTO();
-//        bulkImageListingRequestDTO.getImageListingRequestDTOList().remove(0);
-//
-//        Assertions.assertThrows(SCInvalidRequestException.class, () -> classUnderTest.handleBulkImages(bulkImageListingRequestDTO));
-//    }
+        Assertions.assertThrows(SCInvalidRequestException.class, () -> classUnderTest.handleBulkImages(bulkImageListingRequestDTO));
+    }
 
     @Test
     void testHandleImageListingHappyPath() {

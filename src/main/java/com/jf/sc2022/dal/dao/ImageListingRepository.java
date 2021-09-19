@@ -5,14 +5,12 @@ import com.jf.sc2022.dal.model.ImageListing;
 import com.jf.sc2022.dal.model.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import java.util.Set;
 
 public interface ImageListingRepository extends JpaRepository<ImageListing, Long> {
-    List<ImageListing> findAllByTags(Tag tag);
+    Set<ImageListing> findAllByTags(Tag tag);
 
-    List<ImageListing> findAllByTagsContains(List<Tag> tagSet);
+    Set<ImageListing> findAllByTitleLike(String title);
 
-    List<ImageListing> findAllByTitleLike(String title);
-
-    List<ImageListing> findAllByDescriptionLike(String description);
+    Set<ImageListing> findAllByDescriptionLike(String description);
 }

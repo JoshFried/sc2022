@@ -2,6 +2,7 @@ package com.jf.sc2022.configuartion;
 
 import com.jf.sc2022.converter.ImageListingRequestDTOToImageListingConverter;
 import com.jf.sc2022.converter.ImageListingToImageListingDTOConverter;
+import com.jf.sc2022.converter.PaymentToPaymentDTOConverter;
 import com.jf.sc2022.converter.RegistrationDTOToUserConverter;
 import com.jf.sc2022.converter.UserToUserDTOConverter;
 import lombok.RequiredArgsConstructor;
@@ -65,5 +66,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
         mvcConversionService.addConverter(new RegistrationDTOToUserConverter());
         mvcConversionService.addConverter(new ImageListingRequestDTOToImageListingConverter());
         mvcConversionService.addConverter(new ImageListingToImageListingDTOConverter());
+        mvcConversionService.addConverter(new PaymentToPaymentDTOConverter());
     }
 }

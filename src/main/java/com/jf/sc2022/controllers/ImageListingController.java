@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -53,14 +53,15 @@ public class ImageListingController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ImageListingDTO>> searchByTag(@RequestParam final String tag) {
+    public ResponseEntity<Set<ImageListingDTO>> searchByTag(@RequestParam final String tag) {
         return new ResponseEntity<>(imageListingService.searchByTag(new Tag(tag)), HttpStatus.ACCEPTED);
     }
 
-    @GetMapping
-    public ResponseEntity<List<ImageListingDTO>> searchByTags(@RequestParam final List<String> tags) {
-        return new ResponseEntity<>(imageListingService.searchByTags(tags.stream().map(Tag::new)
-                                                                         .collect(Collectors.toList())),
-                                    HttpStatus.ACCEPTED);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<ImageListingDTO>> searchByTags(@RequestParam final Set<String> tags) {
+//        return new ResponseEntity<>(imageListingService.searchByTags(tags.stream()
+//                                                                         .map(Tag::new)
+//                                                                         .collect(Collectors.toSet())),
+//                                    HttpStatus.ACCEPTED);
+//    }
 }

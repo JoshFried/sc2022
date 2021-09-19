@@ -40,6 +40,4 @@ public class User {
 
     @OneToMany
     private List<Payment> transactionHistory;
-    
-
 }
