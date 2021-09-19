@@ -11,6 +11,7 @@ public class UserToUserDTOConverter implements Converter<User, UserDTO> {
     @Override
     public UserDTO convert(final User user) {
         return UserDTO.builder()
+                      .id(user.getId())
                       .email(user.getEmail())
                       .username(user.getUsername())
                       .firstName(user.getFirstName())

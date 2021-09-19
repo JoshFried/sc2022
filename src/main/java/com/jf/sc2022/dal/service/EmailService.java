@@ -20,11 +20,12 @@ public class EmailService {
      *
      * @param user the new user that has been created
      */
-    public void sendConfirmationEmail(final User user) {
+    public ConfirmationToken sendConfirmationEmail(final User user) {
         final ConfirmationToken token = new ConfirmationToken(user);
 
-        final String content = String.format("To confirm your email click here : http://localhost:8080/confirm-account?token=%s", token.getConfirmationToken());
+        final String content = String.format("To confirm your email click here : http://localhost:8080/confirm-account?token=%s", token.getToken());
         getSimpleMailMessage(user.getEmail(), content);
+        return token;
     }
 
     /**
