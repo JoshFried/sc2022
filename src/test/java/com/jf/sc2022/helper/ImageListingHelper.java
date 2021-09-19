@@ -1,6 +1,7 @@
 package com.jf.sc2022.helper;
 
 import com.jf.sc2022.dal.model.ImageListing;
+import com.jf.sc2022.dal.model.Tag;
 import com.jf.sc2022.dto.BulkImageListingRequestDTO;
 import com.jf.sc2022.dto.ImageListingDTO;
 import com.jf.sc2022.dto.ImageListingRequestDTO;
@@ -8,15 +9,18 @@ import com.jf.sc2022.dto.ImageListingRequestDTO;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ImageListingHelper {
-    public static final long   IMAGE_LISTING_ID = 1L;
-    public static final Date   LISTING_DATE     = Date.from(Instant.now());
-    public static final String TITLE            = "title";
-    public static final String DESCRIPTION      = "description";
-    public static final long   VIEWS            = 0L;
-    public static final double PRICE            = 1.0;
-    public static final String PATH             = "path";
+    public static final  long   IMAGE_LISTING_ID = 1L;
+    public static final  Date   LISTING_DATE     = Date.from(Instant.now());
+    public static final  String TITLE            = "title";
+    public static final  String DESCRIPTION      = "description";
+    public static final  long   VIEWS            = 0L;
+    public static final  double PRICE            = 1.0;
+    public static final  String PATH             = "path";
+    private static final String TAG              = "animals";
 
 
     public static ImageListingDTO buildImageListingDTO() {
@@ -28,6 +32,7 @@ public class ImageListingHelper {
                               .views(VIEWS)
                               .price(PRICE)
                               .path(PATH)
+                              .tags(new HashSet<>(Set.of(new Tag(TAG))))
                               .build();
     }
 
@@ -40,6 +45,7 @@ public class ImageListingHelper {
                            .views(VIEWS)
                            .price(PRICE)
                            .path(PATH)
+                           .tags(new HashSet<>(Set.of(new Tag(TAG))))
                            .build();
     }
 

@@ -29,8 +29,7 @@ public class ImageListingMapper {
         }
 
         if (!dto.getTags().equals(entity.getTags())) {
-
-            entity.getTags().addAll(dto.getTags());
+            entity.setTags(dto.getTags());
         }
 
         if (dto.getViews() != entity.getViews()) {

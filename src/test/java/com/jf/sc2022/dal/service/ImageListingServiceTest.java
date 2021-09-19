@@ -2,6 +2,7 @@ package com.jf.sc2022.dal.service;
 
 import com.jf.sc2022.dal.dao.ImageListingRepository;
 import com.jf.sc2022.dal.model.ImageListing;
+import com.jf.sc2022.dal.model.Tag;
 import com.jf.sc2022.dal.model.User;
 import com.jf.sc2022.dal.service.exceptions.SCInvalidRequestException;
 import com.jf.sc2022.dto.BulkImageListingRequestDTO;
@@ -20,6 +21,9 @@ import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
+
+import static com.jf.sc2022.helper.ImageListingHelper.PRICE;
 
 @ExtendWith(MockitoExtension.class)
 class ImageListingServiceTest {
@@ -78,5 +82,77 @@ class ImageListingServiceTest {
         Assertions.assertEquals(classUnderTest.handleImageListing(imageListingRequestDTO), imageListingDTO);
 
         Mockito.verify(userService).updateUsersListings(user, imageListing);
+    }
+
+    @Test
+    void testUpdateImageListingWithNewPrice() {
+        final ImageListing    imageListing    = ImageListingHelper.buildImageListing();
+        final ImageListingDTO imageListingDTO = ImageListingHelper.buildImageListingDTO();
+        imageListingDTO.setPrice(PRICE + 1.0);
+
+        final ImageListing expectedResult = ImageListingHelper.buildImageListing();
+        expectedResult.setPrice(PRICE + 1.0);
+
+        Mockito.when(imageListingRepository.findById(imageListingDTO.getId())).thenReturn(Optional.ofNullable(imageListing));
+        Mockito.when(imageListingRepository.save(expectedResult)).thenReturn(expectedResult);
+        Mockito.when(mvcConversionService.convert(expectedResult, ImageListingDTO.class)).thenReturn(imageListingDTO);
+
+        assertResult(imageListingDTO);
+    }
+
+    @Test
+    void testUpdateImageListingWithNewTags() {
+        final ImageListing    imageListing    = ImageListingHelper.buildImageListing();
+        final ImageListingDTO imageListingDTO = ImageListingHelper.buildImageListingDTO();
+        final ImageListing    expectedResult  = ImageListingHelper.buildImageListing();
+
+        final Tag nature = new Tag("nature");
+        imageListingDTO.getTags().add(nature);
+        expectedResult.getTags().add(nature);
+
+        Mockito.when(imageListingRepository.findById(imageListingDTO.getId())).thenReturn(Optional.ofNullable(imageListing));
+        Mockito.when(imageListingRepository.save(expectedResult)).thenReturn(expectedResult);
+        Mockito.when(mvcConversionService.convert(expectedResult, ImageListingDTO.class)).thenReturn(imageListingDTO);
+
+        assertResult(imageListingDTO);
+    }
+
+    @Test
+    void testUpdateImageListingWithUpdatedViews() {
+        final ImageListing    imageListing    = ImageListingHelper.buildImageListing();
+        final ImageListingDTO imageListingDTO = ImageListingHelper.buildImageListingDTO();
+        final ImageListing    expectedResult  = ImageListingHelper.buildImageListing();
+
+        final long views = imageListing.getViews() + 1;
+        imageListingDTO.setViews(views);
+        expectedResult.setViews(views);
+
+        Mockito.when(imageListingRepository.findById(imageListingDTO.getId())).thenReturn(Optional.ofNullable(imageListing));
+        Mockito.when(imageListingRepository.save(expectedResult)).thenReturn(expectedResult);
+        Mockito.when(mvcConversionService.convert(expectedResult, ImageListingDTO.class)).thenReturn(imageListingDTO);
+
+        assertResult(imageListingDTO);
+    }
+
+    @Test
+    void testUpdateImageListingWithChangedAvailability() {
+        final ImageListing    imageListing    = ImageListingHelper.buildImageListing();
+        final ImageListingDTO imageListingDTO = ImageListingHelper.buildImageListingDTO();
+        final ImageListing    expectedResult  = ImageListingHelper.buildImageListing();
+
+        imageListingDTO.setAvailable(true);
+        expectedResult.setAvailable(true);
+
+        Mockito.when(imageListingRepository.findById(imageListingDTO.getId())).thenReturn(Optional.ofNullable(imageListing));
+        Mockito.when(imageListingRepository.save(expectedResult)).thenReturn(expectedResult);
+        Mockito.when(mvcConversionService.convert(expectedResult, ImageListingDTO.class)).thenReturn(imageListingDTO);
+
+        assertResult(imageListingDTO);
+    }
+
+    private void assertResult(final ImageListingDTO imageListingDTO) {
+        final ImageListingDTO result = classUnderTest.updateImageListing(imageListingDTO);
+        Assertions.assertEquals(imageListingDTO, result);
+        Assertions.assertNotEquals(ImageListingHelper.buildImageListingDTO(), result);
     }
 }

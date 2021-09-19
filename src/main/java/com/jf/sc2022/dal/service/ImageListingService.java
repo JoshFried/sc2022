@@ -74,8 +74,11 @@ public class ImageListingService {
     }
 
     public ImageListingDTO updateImageListing(final ImageListingDTO imageListingDTO) {
-        return mvcConversionService.convert(repository.save(ImageListingMapper.updateImageFields(imageListingDTO, repository.getById(imageListingDTO.getId()))),
-                                            ImageListingDTO.class);
+        final ImageListing imageListing   = repository.findById(imageListingDTO.getId()).get();
+        final ImageListing updatedListing = ImageListingMapper.updateImageFields(imageListingDTO, imageListing);
+        return mvcConversionService.convert(repository.save(updatedListing), ImageListingDTO.class);
+//        return mvcConversionService.convert(repository.save(ImageListingMapper.updateImageFields(imageListingDTO, repository.getById(imageListingDTO.getId()))),
+//                                            ImageListingDTO.class);
     }
 
     public ImageListingDTO deleteImageListing(final ImageListingDTO imageListingDTO) {

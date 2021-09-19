@@ -21,6 +21,7 @@ class RegistrationDTOToUserConverterTest {
         final RegistrationDTO input          = RegistrationHelper.buildRegistrationDTO();
         final User            expectedResult = UserHelper.createUser();
         expectedResult.setId(null);
+        expectedResult.setEnabled(false);
         Assertions.assertEquals(expectedResult, classUnderTest.convert(input));
     }
 }
