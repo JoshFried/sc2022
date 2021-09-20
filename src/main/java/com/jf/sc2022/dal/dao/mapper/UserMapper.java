@@ -4,9 +4,11 @@ package com.jf.sc2022.dal.dao.mapper;
 import com.jf.sc2022.dal.model.User;
 import com.jf.sc2022.dto.UserDTO;
 import com.jf.sc2022.dto.registration.validators.FieldValidator;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
     public static User mapStringFields(final UserDTO dto, final User user) {
         if (!dto.getEmail().equals(user.getEmail())) {
@@ -31,5 +33,4 @@ public class UserMapper {
 
         return user;
     }
-
 }

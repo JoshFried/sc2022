@@ -61,7 +61,6 @@ public class AuthenticationService {
         return userService.toggleAccountActivation(confirmationToken.getUser());
     }
 
-
     public LoginResponseDTO login(final HttpServletRequest request, final LoginRequestDTO loginRequest) {
         final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                                                                                                                 loginRequest.getPassword());

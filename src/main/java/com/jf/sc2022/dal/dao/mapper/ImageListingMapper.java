@@ -8,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Component
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ImageListingMapper {
     public static ImageListing updateImageFields(final ImageListingDTO dto, final ImageListing entity) {

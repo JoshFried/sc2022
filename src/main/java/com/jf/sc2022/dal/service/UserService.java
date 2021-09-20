@@ -10,7 +10,6 @@ import com.jf.sc2022.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,8 +19,8 @@ public class UserService {
     private final UserRepository    userRepository;
 
     public User getUserFromContext() {
-        final UserDetails details = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return handleGetByUsername(details.getUsername());
+        final String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return handleGetByUsername(username);
     }
 
     public UserDTO createUser(final User user) {

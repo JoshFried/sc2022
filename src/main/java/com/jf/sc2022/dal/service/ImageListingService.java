@@ -2,11 +2,13 @@ package com.jf.sc2022.dal.service;
 
 import com.jf.sc2022.dal.dao.ImageListingRepository;
 import com.jf.sc2022.dal.dao.mapper.ImageListingMapper;
+import com.jf.sc2022.dal.dao.mapper.TagRepository;
 import com.jf.sc2022.dal.model.ImageListing;
 import com.jf.sc2022.dal.model.Tag;
 import com.jf.sc2022.dal.model.User;
 import com.jf.sc2022.dal.service.exceptions.SCInvalidPathException;
 import com.jf.sc2022.dal.service.exceptions.SCInvalidRequestException;
+import com.jf.sc2022.dal.service.exceptions.SCNotFoundException;
 import com.jf.sc2022.dto.BulkImageListingRequestDTO;
 import com.jf.sc2022.dto.ImageListingDTO;
 import com.jf.sc2022.dto.ImageListingRequestDTO;
@@ -16,12 +18,14 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,8 +35,9 @@ public class ImageListingService {
     private final UserService            userService;
     private final ConversionService      mvcConversionService;
     private final ImageListingRepository repository;
+    private final TagRepository          tagRepository;
 
-    private static final String STORAGE_DIRECTORY = "/src/main/resources/storage";
+    private static final String STORAGE_DIRECTORY = "src/main/resources/storage";
 
     /**
      * Handle a bulk image request, first validate the request -> a valid request contains at least one new ImageListing
@@ -69,25 +74,25 @@ public class ImageListingService {
         return insertImageListing(requestDTO, path);
     }
 
-    public ImageListingDTO getImageListing(final long imageListingId) {
-        return mvcConversionService.convert(repository.getById(imageListingId), ImageListingDTO.class);
+    public ImageListingDTO getImageListing(final long id) {
+        return mvcConversionService.convert(fetchImageListing(id), ImageListingDTO.class);
     }
 
     public ImageListingDTO updateImageListing(final ImageListingDTO imageListingDTO) {
-        final ImageListing imageListing   = repository.findById(imageListingDTO.getId()).get();
+        final ImageListing imageListing = fetchImageListing(imageListingDTO.getId());
+
         final ImageListing updatedListing = ImageListingMapper.updateImageFields(imageListingDTO, imageListing);
         return mvcConversionService.convert(repository.save(updatedListing), ImageListingDTO.class);
-//        return mvcConversionService.convert(repository.save(ImageListingMapper.updateImageFields(imageListingDTO, repository.getById(imageListingDTO.getId()))),
-//                                            ImageListingDTO.class);
     }
 
-    public ImageListingDTO deleteImageListing(final ImageListingDTO imageListingDTO) {
-        final String path = imageListingDTO.getPath();
+    public ImageListingDTO deleteImageListing(final long id) {
+        final ImageListing imageListing = fetchImageListing(id);
+        final String       path         = imageListing.getPath();
 
         try {
             Files.deleteIfExists(Path.of(path));
-            repository.deleteById(imageListingDTO.getId());
-            return imageListingDTO;
+            repository.deleteById(imageListing.getId());
+            return mvcConversionService.convert(imageListing, ImageListingDTO.class);
         } catch (final IOException e) {
             log.error(String.format("ImageListingService [deleteImageListing]: failed to delete image listing due to an invalid path %s", path));
             throw new SCInvalidPathException(String.format("Cannot find path: %s", path));
@@ -98,9 +103,11 @@ public class ImageListingService {
         return convertBulkImageListings(repository.findAllByTags(tag));
     }
 
-//    public Set<ImageListingDTO> searchByTags(final Set<Tag> tags) {
-//        return convertBulkImageListings(tags.stream().map(tag -> repository.findAllByTags(tag)).flatMap(Collectors.toSet()))
-//    }
+    public Set<ImageListingDTO> searchByTags(final Set<Tag> tags) {
+        final Set<ImageListingDTO> result = new HashSet<>();
+        tags.stream().map(this::searchByTag).forEach(result::addAll);
+        return result;
+    }
 
     public Set<ImageListingDTO> searchByTitle(final String title) {
         return convertBulkImageListings(repository.findAllByTitleLike(title));
@@ -128,6 +135,11 @@ public class ImageListingService {
         listing.setUser(user);
         listing.setPath(path);
 
+        listing.getTags()
+               .stream()
+               .filter(tag -> tagRepository.findById(tag.getName()).isEmpty())
+               .forEach(tagRepository::save);
+
         userService.updateUsersListings(user, listing);
         return mvcConversionService.convert(repository.save(listing), ImageListingDTO.class);
     }
@@ -137,19 +149,18 @@ public class ImageListingService {
      * @return the path where the new image will be saved
      */
     private String createPath(final MultipartFile multipartFile) {
-        final String path = String.format("%s%s%s", STORAGE_DIRECTORY, File.separator, multipartFile.getOriginalFilename());
-        return validatePath(multipartFile, path);
+        return validatePath(multipartFile);
     }
 
     /**
      * @param multipartFile file containing the information that will be stored in our newly created local file
-     * @param path          this is the path where the new image will be saved
      * @return path of our newly created file
      */
-    private String validatePath(final MultipartFile multipartFile, final String path) {
+    private String validatePath(final MultipartFile multipartFile) {
         try {
-            multipartFile.transferTo(new File(path));
-            return path;
+            final Path path = Paths.get(STORAGE_DIRECTORY).resolve(String.format("%s%s", UUID.randomUUID(), multipartFile.getOriginalFilename()));
+            Files.copy(multipartFile.getInputStream(), path);
+            return path.toString();
         } catch (final IOException e) {
             return null;
         }
@@ -162,5 +173,9 @@ public class ImageListingService {
     private static boolean validateRequest(final BulkImageListingRequestDTO bulkImageListingRequestDTO) {
         return bulkImageListingRequestDTO.getImageListingRequestDTOList() == null
                        || !bulkImageListingRequestDTO.getImageListingRequestDTOList().isEmpty();
+    }
+
+    private ImageListing fetchImageListing(final long id) {
+        return repository.findById(id).orElseThrow(() -> new SCNotFoundException("ImageListing with id: " + id + " does not exist"));
     }
 }

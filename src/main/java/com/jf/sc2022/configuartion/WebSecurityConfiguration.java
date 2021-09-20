@@ -32,6 +32,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
             .antMatchers("/register").permitAll()
             .antMatchers("/login").permitAll()
             .antMatchers("/api").permitAll()
+            .antMatchers("/users/").permitAll()
             .and()
             .formLogin().disable()
             .logout()

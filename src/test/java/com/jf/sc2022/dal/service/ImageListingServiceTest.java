@@ -1,6 +1,7 @@
 package com.jf.sc2022.dal.service;
 
 import com.jf.sc2022.dal.dao.ImageListingRepository;
+import com.jf.sc2022.dal.dao.mapper.TagRepository;
 import com.jf.sc2022.dal.model.ImageListing;
 import com.jf.sc2022.dal.model.Tag;
 import com.jf.sc2022.dal.model.User;
@@ -30,11 +31,12 @@ class ImageListingServiceTest {
     @Mock private UserService            userService;
     @Mock private ConversionService      mvcConversionService;
     @Mock private ImageListingRepository imageListingRepository;
+    @Mock private TagRepository          tagRepository;
     private       ImageListingService    classUnderTest;
 
     @BeforeEach
     public void setup() {
-        classUnderTest = new ImageListingService(userService, mvcConversionService, imageListingRepository);
+        classUnderTest = new ImageListingService(userService, mvcConversionService, imageListingRepository, tagRepository);
     }
 
     @Test
