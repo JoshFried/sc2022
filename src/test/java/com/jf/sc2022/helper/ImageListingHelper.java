@@ -13,14 +13,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ImageListingHelper {
-    public static final  long   IMAGE_LISTING_ID = 1L;
-    public static final  Date   LISTING_DATE     = Date.from(Instant.now());
-    public static final  String TITLE            = "title";
-    public static final  String DESCRIPTION      = "description";
-    public static final  long   VIEWS            = 0L;
-    public static final  double PRICE            = 1.0;
-    public static final  String PATH             = "path";
-    private static final String TAG              = "animals";
+    public static final long   IMAGE_LISTING_ID = 1L;
+    public static final Date   LISTING_DATE     = Date.from(Instant.now());
+    public static final String TITLE            = "title";
+    public static final String DESCRIPTION      = "description";
+    public static final long   VIEWS            = 0L;
+    public static final double PRICE            = 1.0;
+    public static final String PATH             = "path";
+    public static final String TAG              = "animals";
 
 
     public static ImageListingDTO buildImageListingDTO() {
@@ -64,6 +64,7 @@ public class ImageListingHelper {
                                      .description(DESCRIPTION)
                                      .price(PRICE)
                                      .title(TITLE)
+                                     .tags(Collections.singleton(TAG))
                                      .build();
     }
 

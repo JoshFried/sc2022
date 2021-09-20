@@ -1,6 +1,7 @@
 package com.jf.sc2022.dal.service;
 
 import com.jf.sc2022.dal.dao.ConfirmationTokenRepository;
+import com.jf.sc2022.dal.model.ConfirmationToken;
 import com.jf.sc2022.dal.model.User;
 import com.jf.sc2022.dal.service.exceptions.SCUserAlreadyExistsException;
 import com.jf.sc2022.dto.UserDTO;
@@ -8,6 +9,7 @@ import com.jf.sc2022.dto.login.LoginRequestDTO;
 import com.jf.sc2022.dto.login.LoginResponseDTO;
 import com.jf.sc2022.dto.registration.RegistrationDTO;
 import com.jf.sc2022.helper.RegistrationHelper;
+import com.jf.sc2022.helper.UserHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,9 +52,13 @@ class AuthenticationServiceTest {
 
     @Test
     void testCreateUser_givenUserDoesntAlreadyExist() {
-        when(mvcConversionService.convert(REGISTRATION_DTO, User.class)).thenReturn(createUser());
+        final User              user  = UserHelper.createUser();
+        final ConfirmationToken token = new ConfirmationToken(user);
+
+        when(mvcConversionService.convert(REGISTRATION_DTO, User.class)).thenReturn(user);
         when(passwordEncoder.encode(REGISTRATION_DTO.getPassword())).thenReturn(ENCODED_PASSWORD);
-        when(userService.createUser(any(User.class))).thenReturn(createUserDTO());
+        when(emailService.sendConfirmationEmail(user)).thenReturn(token);
+        when(userService.createUser(user)).thenReturn(createUserDTO());
 
         final UserDTO dto = classUnderTest.registerUser(REGISTRATION_DTO);
         Assertions.assertNotNull(dto);
