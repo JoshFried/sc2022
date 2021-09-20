@@ -20,6 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -40,7 +42,7 @@ class ImageListingServiceTest {
     }
 
     @Test
-    void testHandleBulkImagesHappyPath() {
+    void testHandleBulkImagesHappyPath() throws IOException {
         final BulkImageListingRequestDTO bulkImageListingRequestDTO = ImageListingHelper.buildBulkImageListingRequestDTO();
         final ImageListing               imageListing               = ImageListingHelper.buildImageListing();
         final User                       user                       = Mockito.mock(User.class);
@@ -50,6 +52,7 @@ class ImageListingServiceTest {
         bulkImageListingRequestDTO.getImageListingRequestDTOList().get(0).setMultipartFile(multipartFile);
 
         Mockito.when(multipartFile.getOriginalFilename()).thenReturn("td.png");
+        Mockito.when(multipartFile.getInputStream()).thenReturn(Mockito.mock(InputStream.class));
         Mockito.when(mvcConversionService.convert(bulkImageListingRequestDTO.getImageListingRequestDTOList().get(0), ImageListing.class)).thenReturn(imageListing);
         Mockito.when(userService.getUserFromContext()).thenReturn(user);
         Mockito.when(imageListingRepository.save(imageListing)).thenReturn(imageListing);
@@ -68,7 +71,7 @@ class ImageListingServiceTest {
     }
 
     @Test
-    void testHandleImageListingHappyPath() {
+    void testHandleImageListingHappyPath() throws IOException {
         final ImageListing           imageListing           = ImageListingHelper.buildImageListing();
         final User                   user                   = Mockito.mock(User.class);
         final ImageListingDTO        imageListingDTO        = ImageListingHelper.buildImageListingDTO();
@@ -77,6 +80,7 @@ class ImageListingServiceTest {
         imageListingRequestDTO.setMultipartFile(multipartFile);
 
         Mockito.when(multipartFile.getOriginalFilename()).thenReturn("td.png");
+        Mockito.when(multipartFile.getInputStream()).thenReturn(Mockito.mock(InputStream.class));
         Mockito.when(mvcConversionService.convert(imageListingRequestDTO, ImageListing.class)).thenReturn(imageListing);
         Mockito.when(userService.getUserFromContext()).thenReturn(user);
         Mockito.when(imageListingRepository.save(imageListing)).thenReturn(imageListing);
