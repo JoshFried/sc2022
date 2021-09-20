@@ -10,6 +10,7 @@ import com.jf.sc2022.dto.BulkImageListingRequestDTO;
 import com.jf.sc2022.dto.ImageListingDTO;
 import com.jf.sc2022.dto.ImageListingRequestDTO;
 import com.jf.sc2022.helper.ImageListingHelper;
+import com.jf.sc2022.helper.UserHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
+import static com.jf.sc2022.helper.ImageListingHelper.IMAGE_LISTING_ID;
 import static com.jf.sc2022.helper.ImageListingHelper.PRICE;
 
 @ExtendWith(MockitoExtension.class)
@@ -135,6 +137,40 @@ class ImageListingServiceTest {
 
         runUpdateImageListingTests(imageListingDTO, expectedResult);
     }
+
+    @Test
+    void testDeleteImageListingHappyPath() {
+        final ImageListing listing = ImageListingHelper.buildImageListing();
+        final User         user    = UserHelper.createUser();
+
+        listing.setUser(user);
+        final ImageListingDTO imageListingDTO = ImageListingHelper.buildImageListingDTO();
+
+        Mockito.when(userService.getUserFromContext()).thenReturn(user);
+        Mockito.when(imageListingRepository.findById(IMAGE_LISTING_ID)).thenReturn(Optional.of(listing));
+        Mockito.when(mvcConversionService.convert(listing, ImageListingDTO.class)).thenReturn(imageListingDTO);
+
+        final ImageListingDTO result = classUnderTest.deleteImageListing(IMAGE_LISTING_ID);
+
+        Mockito.verify(imageListingRepository).deleteById(IMAGE_LISTING_ID);
+
+        Assertions.assertEquals(imageListingDTO, result);
+    }
+
+    @Test
+    void testDeleteImageListingWhenUserIsNotArtist() {
+        final ImageListing listing   = ImageListingHelper.buildImageListing();
+        final User         user      = UserHelper.createUser();
+        final User         otherUser = UserHelper.createBasicUser();
+
+        listing.setUser(user);
+
+        Mockito.when(userService.getUserFromContext()).thenReturn(otherUser);
+        Mockito.when(imageListingRepository.findById(IMAGE_LISTING_ID)).thenReturn(Optional.of(listing));
+
+        Assertions.assertThrows(SCInvalidRequestException.class, () -> classUnderTest.deleteImageListing(IMAGE_LISTING_ID));
+    }
+
 
     private void runUpdateImageListingTests(final ImageListingDTO imageListingDTO, final ImageListing expectedResult) {
         final ImageListing imageListing = ImageListingHelper.buildImageListing();

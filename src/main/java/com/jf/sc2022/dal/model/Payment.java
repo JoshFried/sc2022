@@ -23,5 +23,4 @@ public class Payment {
     private long   id;
     private long   amount;
     private String email;
-    private String chargeId;
 }

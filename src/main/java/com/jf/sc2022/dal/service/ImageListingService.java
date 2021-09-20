@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -32,10 +32,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ImageListingService {
-    private final UserService            userService;
-    private final ConversionService      mvcConversionService;
-    private final ImageListingRepository repository;
-    private final TagRepository          tagRepository;
+    public static final String                 IMAGE_LISTING_SERVICE = "ImageListingService";
+    private final       UserService            userService;
+    private final       ConversionService      mvcConversionService;
+    private final       ImageListingRepository repository;
+    private final       TagRepository          tagRepository;
 
     private static final String STORAGE_DIRECTORY = "src/main/resources/storage";
 
@@ -62,7 +63,7 @@ public class ImageListingService {
      */
     public ImageListingDTO handleImageListing(final ImageListingRequestDTO requestDTO) {
         final String path      = createPath(requestDTO.getMultipartFile());
-        final String logPrefix = "ImageListingService [buildImageListingDTO]:";
+        final String logPrefix = IMAGE_LISTING_SERVICE + " [buildImageListingDTO]:";
 
         log.info(String.format("%s attempting to create image listing %s", logPrefix, requestDTO.getTitle()));
 
@@ -85,16 +86,30 @@ public class ImageListingService {
         return mvcConversionService.convert(repository.save(updatedListing), ImageListingDTO.class);
     }
 
+    /**
+     * Delete a given image listing, this method will only succeed if the user making the request is the owner of the listing, and the listing exists
+     *
+     * @param id the id of the image listing to be deleted
+     * @return ImageListingDTO object representing the deleted record from the database
+     */
     public ImageListingDTO deleteImageListing(final long id) {
         final ImageListing imageListing = fetchImageListing(id);
         final String       path         = imageListing.getPath();
+        final User         user         = userService.getUserFromContext();
+
+        if (!user.equals(imageListing.getUser())) {
+            throw new SCInvalidRequestException("Unable to delete this image listing, you can only delete your own image listings and not another artists!");
+        }
 
         try {
+            log.info(String.format("%s [deleteImageListing]: attempting to delete imageListing: %d", IMAGE_LISTING_SERVICE, id));
             Files.deleteIfExists(Path.of(path));
             repository.deleteById(imageListing.getId());
+            log.info(String.format("%s [deleteImageListing]: succeeded deleting imageListing %d", IMAGE_LISTING_SERVICE, id));
+
             return mvcConversionService.convert(imageListing, ImageListingDTO.class);
         } catch (final IOException e) {
-            log.error(String.format("ImageListingService [deleteImageListing]: failed to delete image listing due to an invalid path %s", path));
+            log.error(String.format("%s [deleteImageListing]: failed to delete image listing due to an invalid path %s", IMAGE_LISTING_SERVICE, path));
             throw new SCInvalidPathException(String.format("Cannot find path: %s", path));
         }
     }
@@ -103,10 +118,17 @@ public class ImageListingService {
         return convertBulkImageListings(repository.findAllByTags(tag));
     }
 
+    /**
+     * This method returns the set of ImageListings that are the result of union of all the sets containing the collection of tags passed as an argument
+     *
+     * @param tags the set of tags we are interested in
+     * @return a set of listings
+     */
     public Set<ImageListingDTO> searchByTags(final Set<Tag> tags) {
-        final Set<ImageListingDTO> result = new HashSet<>();
-        tags.stream().map(this::searchByTag).forEach(result::addAll);
-        return result;
+        return tags.stream()
+                   .map(this::searchByTag)
+                   .flatMap(Collection::stream)
+                   .collect(Collectors.toSet());
     }
 
     public Set<ImageListingDTO> searchByTitle(final String title) {

@@ -4,11 +4,11 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Builder
-
+@Getter
 public class PaymentResponseDTO {
-    private         String clientSecret;
-    @Getter private String clientName;
-    @Getter private String listingTitle;
-    @Getter private String artistName;
-    @Getter private double price;
+    private long   id;
+    private String clientName;
+    private String listingTitle;
+    private String artistName;
+    private long   price;
 }

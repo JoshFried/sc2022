@@ -20,7 +20,7 @@ public class UserService {
 
     public User getUserFromContext() {
         final String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return handleGetByUsername(username);
+        return fetchByUsername(username);
     }
 
     public UserDTO createUser(final User user) {
@@ -41,7 +41,7 @@ public class UserService {
     }
 
     public UserDTO getUserByUsername(final String username) {
-        return mvcConversionService.convert(handleGetByUsername(username), UserDTO.class);
+        return mvcConversionService.convert(fetchByUsername(username), UserDTO.class);
     }
    
     public User fetchByUsername(final String username) {
@@ -54,15 +54,14 @@ public class UserService {
     }
 
     public UserDTO getUser(final long id) {
-        return mvcConversionService.convert(userRepository.findById(id), UserDTO.class);
-    }
-
-    public UserDTO updateUser(final UserDTO user) {
-        return mvcConversionService.convert(userRepository.save(UserMapper.mapStringFields(user, userRepository.getById(user.getId()))),
+        return mvcConversionService.convert(userRepository.findById(id)
+                                                          .orElseThrow(() -> new SCNotFoundException(String.format("User with id: %d does not exist!", id))),
                                             UserDTO.class);
     }
 
-    private User handleGetByUsername(final String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new SCNotFoundException(ExceptionHelper.getNotFoundExceptionMessage("Username", username)));
+    public UserDTO updateUser(final UserDTO user) {
+        return mvcConversionService.convert(userRepository.save(UserMapper.mapStringFields(user,
+                                                                                           userRepository.getById(user.getId()))),
+                                            UserDTO.class);
     }
 }
