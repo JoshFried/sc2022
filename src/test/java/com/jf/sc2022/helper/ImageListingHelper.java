@@ -5,6 +5,8 @@ import com.jf.sc2022.dal.model.Tag;
 import com.jf.sc2022.dto.BulkImageListingRequestDTO;
 import com.jf.sc2022.dto.ImageListingDTO;
 import com.jf.sc2022.dto.ImageListingRequestDTO;
+import com.jf.sc2022.dto.payment.PaymentRequestDTO;
+import com.jf.sc2022.dto.payment.PaymentResponseDTO;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -22,6 +24,24 @@ public class ImageListingHelper {
     public static final String PATH             = "path";
     public static final String TAG              = "animals";
 
+    public static PaymentRequestDTO buildPaymentRequestDTO() {
+        return PaymentRequestDTO.builder()
+                                .amount(PRICE)
+                                .currency("CAD")
+                                .imageListingId(IMAGE_LISTING_ID)
+                                .email(UserHelper.EMAIL)
+                                .userId(UserHelper.USER_ID)
+                                .build();
+    }
+
+    public static PaymentResponseDTO buildPaymentResponseDTO() {
+        return PaymentResponseDTO.builder()
+                                 .clientName(UserHelper.USERNAME)
+                                 .artistName(UserHelper.USERNAME)
+                                 .listingTitle(TITLE)
+                                 .price(PRICE)
+                                 .build();
+    }
 
     public static ImageListingDTO buildImageListingDTO() {
         return ImageListingDTO.builder()

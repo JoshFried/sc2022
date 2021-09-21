@@ -21,6 +21,6 @@ public class Payment {
     @Id
     @GeneratedValue
     private long   id;
-    private long   amount;
-    private String email;
+    private double amount;
+    private long   imageListing;
 }

@@ -12,7 +12,6 @@ public class PaymentToPaymentDTOConverter implements Converter<Payment, PaymentD
     public PaymentDTO convert(final Payment payment) {
         return PaymentDTO.builder()
                          .amount(payment.getAmount())
-                         .email(payment.getEmail())
                          .id(payment.getId())
                          .build();
     }

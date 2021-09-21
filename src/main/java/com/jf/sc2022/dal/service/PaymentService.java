@@ -1,13 +1,13 @@
 package com.jf.sc2022.dal.service;
 
 import com.jf.sc2022.dal.dao.PaymentRepository;
+import com.jf.sc2022.dal.model.Payment;
 import com.jf.sc2022.dal.service.exceptions.SCInvalidRequestException;
 import com.jf.sc2022.dto.ImageListingDTO;
 import com.jf.sc2022.dto.UserDTO;
 import com.jf.sc2022.dto.payment.PaymentRequestDTO;
 import com.jf.sc2022.dto.payment.PaymentResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class PaymentService {
     private final UserService         userService;
     private final PaymentRepository   repository;
-    private final ConversionService   mvcConversionService;
     private final ImageListingService imageListingService;
     private final EmailService        emailService;
 
@@ -42,12 +41,13 @@ public class PaymentService {
 
     private PaymentResponseDTO getPaymentResponseDTO(final UserDTO buyer, final ImageListingDTO imageListingDTO, final UserDTO artist) {
         final PaymentResponseDTO responseDTO = PaymentResponseDTO.builder()
-                                                                 .artistName(artist.getFirstName())
-                                                                 .clientName(buyer.getFirstName())
+                                                                 .artistName(artist.getUsername())
+                                                                 .clientName(buyer.getUsername())
                                                                  .listingTitle(imageListingDTO.getTitle())
-                                                                 .price((long) imageListingDTO.getPrice())
+                                                                 .price(imageListingDTO.getPrice())
                                                                  .build();
 
+        repository.save((Payment.builder().amount(imageListingDTO.getPrice()).imageListing(imageListingDTO.getId()).build()));
         emailService.handlePaymentEvent(buyer, artist, responseDTO);
         return responseDTO;
     }

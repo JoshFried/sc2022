@@ -7,7 +7,7 @@ import lombok.Value;
 @Value
 public class PaymentDTO {
     long   id;
-    long   amount;
+    double amount;
     String email;
     String chargeId;
 }
